@@ -2,54 +2,51 @@ package modelo;
 
 public class ProductoDAO{
 	
-    private ProductoDTO[] productos;
-    private int total = 0;
-
-    public ProductoDAO(int tamanio){
-        productos = new ProductoDTO[tamanio];
-    }
+    private Map<String, ProductoDTO> productos = new HashMap<>();;
+	private int total = 0;
+	
+	public String generarId(){
+		
+		total++;
+		
+		return "P" + total;
+	}
 	
     public boolean agregar(ProductoDTO producto){
-        
-        boolean estado;
-
-        if (producto != null) {
-            productos[total] = producto;
-            total++;
-            estado = true;
-        } else{
-            estado = false;
-        }
-
-        return estado;
+		
+		boolean estado = false;
+		
+		if(producto != null){
+			
+			String id = generarId();
+			producto.setId(id);
+			productos.put(id, producto);
+			estado = true;
+		}
+		
+		return estado;
     }
+	
+	/** Metodo actualizado */
+	public boolean buscarProducto(String id){
+		
+		return productos.containsKey(id);
+	}
 
-    public int buscarXNombre(String nombre){
+	/** Metodo actualizado */
+    public ProductoDTO buscarXId(int idProducto){
 
-        int posicion = -1;
-
-        for(int lugar = 0; lugar < productos.length; lugar++){
-            if (productos[lugar] != null && productos[lugar].getNombre().equals(nombre)) {
-                posicion = lugar;
-                break;
-            }
-        }
-
-        return posicion;
-    }
-
-    public int buscarXId(int id){
-
-        int posicion = -1;
-
-        for(int lugar = 0; lugar < productos.length; lugar++){
-            if (productos[lugar] != null && productos[lugar].getId() == id) {
-                posicion = lugar;
-                break;
-            }
-        }
-
-        return posicion;
+        ProductoDTO encontrado = null;
+		
+		for(ProductoDTO producto : productos){
+			
+			if(producto.getId() == idProducto){
+				encontrado = producto;
+				break;
+			}
+		}
+		
+		return encontrado;
     }
 
 
@@ -57,14 +54,12 @@ public class ProductoDAO{
 
     public boolean modificar(int id, ProductoDTO producto){
 
-        boolean cambio;
-        int posicion = buscarXId(id);
+        boolean cambio = false;
+		ProductoDTO prodAModificar = buscarXId(id);
 
-        if(posicion != -1 && producto != null){
-            productos[posicion] = producto; 
+        if(prodAModificar != null && prodAModificar.getId() == id && producto != null){
+			productos.set(id, producto); 
             cambio = true;
-        } else {
-            cambio = false;
         }
 
         return cambio;
