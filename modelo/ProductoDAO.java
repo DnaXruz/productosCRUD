@@ -28,64 +28,36 @@ public class ProductoDAO{
     }
 	
 	/** Metodo actualizado */
-	public boolean buscarProducto(String id){
+	public ProductoDTO buscarProducto(String id){
 		
-		return productos.containsKey(id);
+        return productos.get(id);
 	}
-
-	/** Metodo actualizado */
-    public ProductoDTO buscarXId(int idProducto){
-
-        ProductoDTO encontrado = null;
-		
-		for(ProductoDTO producto : productos){
-			
-			if(producto.getId() == idProducto){
-				encontrado = producto;
-				break;
-			}
-		}
-		
-		return encontrado;
-    }
 
 
     //Para hacer modificaciones aqui si considero que se deberia hacer atributo por atributo
 
-    public boolean modificar(int id, ProductoDTO producto){
+    public boolean modificar(String id, ProductoDTO producto){
 
-        boolean cambio = false;
-		ProductoDTO prodAModificar = buscarXId(id);
+		if(producto != null && buscarProducto(id) ){
 
-        if(prodAModificar != null && prodAModificar.getId() == id && producto != null){
-			productos.set(id, producto); 
-            cambio = true;
+            ProductoDTO productoOld = productos.get(id); 
+            return productos.replace(id, productoOld, producto);
         }
 
-        return cambio;
+        return false;
     }
 
 
-    public boolean eliminar(int id){
+    public boolean eliminar(String id){
 
-        int posicion = buscarXId(id); 
         boolean eliminado = false;
 
-        if (posicion != -1) {
-            
-            for(int lugar = posicion; lugar < total - 1 ; lugar++){
-                productos[lugar] = productos[lugar + 1];
-            }
-
-            productos[total -1] = null;
-            total--;
-            eliminado = true;
+        if(productos.containsKey(id)){
+            productos.remove(id);
+            estado = true;
         }
 
-        return eliminado;
+        return estado;
     }
-    
-
-
 
 }
